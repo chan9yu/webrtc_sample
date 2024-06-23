@@ -68,4 +68,13 @@ export class SampleService {
 			console.log(error);
 		}
 	}
+
+	public createRoom(userId: string) {
+		console.log('### createRoom: ', userId);
+	}
+
+	public joinRoom(roomId: number, userId: string) {
+		console.log('### joinRoom', roomId);
+		console.log('### joinRoom', userId);
+	}
 }

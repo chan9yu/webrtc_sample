@@ -3,15 +3,36 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>webrtc sample</title>
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 </head>
 
 <body>
-  <div id="app">
-    <h1>WebRTC Smaple</h1>
-    <div id="video-container" />
+  <div id="app" class="flex flex-col items-center gap-12 pt-28 w-dvw h-dvh">
+    <h1 class="text-4xl">WebRTC Smaple App</h1>
+
+    <!-- welcome 컨테이너: 연결 전  -->
+    <div id="welcome-container" class="flex justify-center w-full h-full gap-5">
+      <form id="create-room-form" class="flex flex-col gap-2 w-64">
+        <span class="text-base">create room</span>
+        <input name="userId" class="input input-bordered input-primary input-sm w-full max-w-xs" placeholder="닉네임" />
+        <button class="btn btn-sm btn-primary" type="submit">
+          방 만들기
+        </button>
+      </form>
+      <form id="join-room-form" class="flex flex-col gap-2 w-64">
+        <span class="text-base">join room</span>
+        <input name="roomId" class="input input-bordered input-primary input-sm w-full max-w-xs" placeholder="방 코드" />
+        <input name="userId" class="input input-bordered input-primary input-sm w-full max-w-xs" placeholder="닉네임" />
+        <button class="btn btn-sm btn-primary" type="submit">
+          방 들어가기
+        </button>
+      </form>
+    </div>
+
+    <!-- videoroom 컨테이너: 연결 후  -->
+    <div id="videoroom-container" class="w-full h-full"></div>
   </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
