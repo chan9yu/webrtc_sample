@@ -1,43 +1,31 @@
-import default_avatar_img from '../assets/images/avatar.jpg';
 import { RTCManager } from '../modules/RTCManager';
-import { SocketManager } from '../modules/SocketManager';
+import { SocketManager, SocketManagerEvents } from '../modules/SocketManager';
 
 export class SampleService {
 	private static instance: SampleService;
 
 	private rtcManager: RTCManager;
 	private socketManager: SocketManager;
-	private localVideo = document.createElement('video');
-	private remoteVideo = document.createElement('video');
+	private localStream: MediaStream | null = null;
+	private remoteStream: MediaStream = new MediaStream();
+	private roomId: string;
 
-	get localVideoElement() {
-		return this.localVideo;
+	get localMediaStream() {
+		return this.localStream;
 	}
 
-	get remoteVideoElement() {
-		return this.remoteVideo;
+	get remoteMediaStream() {
+		return this.remoteStream;
 	}
 
-	private constructor() {
-		this.initVideo();
+	get currentRoomId() {
+		return this.roomId;
 	}
 
-	private initVideo() {
-		this.localVideo.muted = true;
-		this.localVideo.autoplay = true;
-		this.localVideo.playsInline = true;
-		this.localVideo.poster = default_avatar_img;
-	}
+	private constructor() {}
 
 	private async startLocalVideoStream() {
-		const constraints: MediaStreamConstraints = {
-			video: {
-				width: { ideal: 640 },
-				height: { ideal: 360 }
-			},
-			audio: true
-		};
-
+		const constraints: MediaStreamConstraints = { video: true, audio: true };
 		return await navigator.mediaDevices.getUserMedia(constraints);
 	}
 
@@ -46,14 +34,21 @@ export class SampleService {
 		this.rtcManager.addTrack(stream);
 	}
 
+	private initSocketManagerEvent() {
+		this.socketManager.addListener(SocketManagerEvents.ROOM_ID, data => {
+			this.roomId = data.roomId;
+		});
+	}
+
 	private startConnection() {
 		this.socketManager = new SocketManager('http://localhost:8080');
+		this.initSocketManagerEvent();
 	}
 
 	private async startProcess() {
 		try {
 			const stream = await this.startLocalVideoStream();
-			this.localVideo.srcObject = stream;
+			this.localStream = stream;
 			this.createPeer(stream);
 			this.startConnection();
 		} catch (error) {
@@ -74,7 +69,8 @@ export class SampleService {
 		this.socketManager.sendCreateRoom(identity);
 	}
 
-	public joinRoom(roomId: number, identity: string) {
-		this.startProcess();
+	public async joinRoom(roomId: string, identity: string) {
+		await this.startProcess();
+		this.socketManager.sendJoinRoom(roomId, identity);
 	}
 }

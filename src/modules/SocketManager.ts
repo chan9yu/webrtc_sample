@@ -1,3 +1,4 @@
+import EventEmitter from 'events';
 import { io, type Socket } from 'socket.io-client';
 
 enum SocketEvents {
@@ -12,10 +13,15 @@ enum SocketEvents {
 	USER_DISCONNECTED = 'user_disconnected'
 }
 
-export class SocketManager {
+export enum SocketManagerEvents {
+	ROOM_ID = 'ROOM_ID'
+}
+
+export class SocketManager extends EventEmitter {
 	private socket: Socket;
 
 	constructor(server: string) {
+		super();
 		this.initilize(server);
 	}
 
@@ -34,6 +40,7 @@ export class SocketManager {
 		this.socket.on(SocketEvents.ROOM_ID, data => {
 			const { roomId } = data;
 			console.log(`<<< recv ${SocketEvents.ROOM_ID}: ${JSON.stringify(data, null, 2)}`);
+			this.emit(SocketManagerEvents.ROOM_ID, { roomId });
 		});
 	}
 
@@ -41,5 +48,11 @@ export class SocketManager {
 		const data = { identity };
 		console.log(`>>> send ${SocketEvents.CREATE_ROOM}: ${JSON.stringify(data, null, 2)}`);
 		this.socket.emit(SocketEvents.CREATE_ROOM, data);
+	}
+
+	public sendJoinRoom(roomId: string, identity: string) {
+		const data = { roomId, identity };
+		console.log(`>>> send ${SocketEvents.JOIN_ROOM}: ${JSON.stringify(data, null, 2)}`);
+		this.socket.emit(SocketEvents.JOIN_ROOM, data);
 	}
 }

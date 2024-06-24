@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>webrtc sample</title>
+  <script defer type="module" src="/src/main.ts"></script>
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 </head>
 
@@ -13,7 +14,7 @@
     <h1 class="text-4xl">WebRTC Smaple App</h1>
 
     <!-- welcome 컨테이너: 연결 전  -->
-    <div id="welcome-container" class="flex justify-center w-full h-full gap-5">
+    <div id="welcome-container" class="flex flex-col justify-start items-center w-full h-full gap-6">
       <form id="create-room-form" class="flex flex-col gap-2 w-64">
         <span class="text-base">create room</span>
         <input name="userId" class="input input-bordered input-primary input-sm w-full max-w-xs" placeholder="닉네임" />
@@ -32,9 +33,18 @@
     </div>
 
     <!-- videoroom 컨테이너: 연결 후  -->
-    <div id="videoroom-container" class="w-full h-full"></div>
+    <div id="videoroom-container" class="flex flex-col items-center w-full h-full">
+      <h4 id="room-id-label" />
+      <div>
+        <div>
+          <video id="local-video" autoplay />
+        </div>
+        <div>
+          <video id="remote-video" autoplay />
+        </div>
+      </div>
+    </div>
   </div>
-  <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>
