@@ -50,15 +50,7 @@ export class SampleService {
 		this.socketManager = new SocketManager('http://localhost:8080');
 	}
 
-	public static getInstance() {
-		if (!SampleService.instance) {
-			SampleService.instance = new SampleService();
-		}
-
-		return SampleService.instance;
-	}
-
-	public async startProcess() {
+	private async startProcess() {
 		try {
 			const stream = await this.startLocalVideoStream();
 			this.localVideo.srcObject = stream;
@@ -69,12 +61,20 @@ export class SampleService {
 		}
 	}
 
-	public createRoom(userId: string) {
-		console.log('### createRoom: ', userId);
+	public static getInstance() {
+		if (!SampleService.instance) {
+			SampleService.instance = new SampleService();
+		}
+
+		return SampleService.instance;
 	}
 
-	public joinRoom(roomId: number, userId: string) {
-		console.log('### joinRoom', roomId);
-		console.log('### joinRoom', userId);
+	public async createRoom(identity: string) {
+		await this.startProcess();
+		this.socketManager.sendCreateRoom(identity);
+	}
+
+	public joinRoom(roomId: number, identity: string) {
+		this.startProcess();
 	}
 }
